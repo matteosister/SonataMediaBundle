@@ -51,9 +51,9 @@ file that was distributed with this source code.
             <input type="hidden" name="provider" value="{{ persistent_parameters.provider }}" />
 
             <fieldset class="filter_legend">
-                <legend class="filter_legend {{ admin.datagrid.hasActiveFilters ? 'active' : 'inactive' }}">{% trans from 'SonataAdminBundle' %}label_filters{% endtrans %}</legend>
+                <legend class="filter_legend {{ admin.datagrid.hasActiveFilters(true) ? 'active' : 'inactive' }}">{% trans from 'SonataAdminBundle' %}label_filters{% endtrans %}</legend>
 
-                <div class="filter_container {{ admin.datagrid.hasActiveFilters ? 'active' : 'inactive' }}">
+                <div class="filter_container {{ admin.datagrid.hasActiveFilters(true) ? 'active' : 'inactive' }}">
                     <table class="bordered-table">
                         {% for filter in admin.datagrid.filters %}
                             <tr id="filter_{{ filter.name }}_row" class="filter {{ filter.isActive ? 'active' : 'inactive' }}{{ filter.hidden ? ' hide' : '' }}">
