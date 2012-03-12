@@ -43,7 +43,7 @@ class MediaAdmin extends Admin
                 'choices' => $providers,
                 'required' => false,
                 'multiple' => false,
-                'expanded' => false
+                'expanded' => false,
             ),
             'hidden' => true,
             'field_type'=> 'choice',
