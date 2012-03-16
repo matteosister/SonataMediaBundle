@@ -128,7 +128,6 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('filesystem')
                     ->children()
-
                         ->arrayNode('local')
                             ->addDefaultsIfNotSet()
                             ->children()
