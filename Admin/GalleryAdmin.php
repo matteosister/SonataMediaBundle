@@ -138,7 +138,7 @@ class GalleryAdmin extends Admin
         }
 
         return array(
-            'context'  => $this->getRequest()->get('context', 'default'),
+            'context'  => $this->getRequest()->get('context', $this->pool->getDefaultContext()),
         );
     }
 
