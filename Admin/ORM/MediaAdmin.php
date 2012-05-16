@@ -26,7 +26,7 @@ class MediaAdmin extends Admin
             ->add('name')
             ->add('providerReference')
             ->add('enabled')
-            ->add('context')
+            //->add('context')
         ;
 
         $providers = array();
@@ -36,7 +36,7 @@ class MediaAdmin extends Admin
             $providers[$name] = $name;
         }
 
-        $datagridMapper->add('providerName', 'doctrine_orm_choice', array(
+        /*$datagridMapper->add('providerName', 'doctrine_orm_choice', array(
             'field_options'=> array(
                 'choices' => $providers,
                 'required' => false,
@@ -44,6 +44,6 @@ class MediaAdmin extends Admin
                 'expanded' => false,
             ),
             'field_type'=> 'choice',
-        ));
+        ));*/
     }
 }
