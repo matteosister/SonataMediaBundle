@@ -27,6 +27,12 @@ class MediaExtension extends \Twig_Extension
 
     protected $mediaManager;
 
+    protected $environment;
+
+    /**
+     * @param \Sonata\MediaBundle\Provider\Pool $mediaService
+     * @param \Sonata\MediaBundle\Model\MediaManagerInterface $mediaManager
+     */
     public function __construct(Pool $mediaService, MediaManagerInterface $mediaManager)
     {
         $this->mediaService = $mediaService;
@@ -34,7 +40,7 @@ class MediaExtension extends \Twig_Extension
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getTokenParsers()
     {
@@ -54,9 +60,7 @@ class MediaExtension extends \Twig_Extension
     }
 
     /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -65,8 +69,9 @@ class MediaExtension extends \Twig_Extension
 
     /**
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
-     * @param string $format
-     * @param array $options
+     * @param string                                   $format
+     * @param array                                    $options
+     *
      * @return string
      */
     public function media($media = null, $format, $options = array())
@@ -93,19 +98,24 @@ class MediaExtension extends \Twig_Extension
     }
 
     /**
-     * @param $media
+     * @param mixed $media
+     *
      * @return null|\Sonata\MediaBundle\Model\MediaInterface
      */
     private function getMedia($media)
     {
-        if ($media instanceof MediaInterface) {
-            return $media;
-        }
-
-        if (strlen($media) > 0) {
+        if (!$media instanceof MediaInterface && strlen($media) > 0) {
             $media = $this->mediaManager->findOneBy(array(
                 'id' => $media
             ));
+        }
+
+        if (!$media instanceof MediaInterface) {
+            return false;
+        }
+
+        if ($media->getProviderStatus() !== MediaInterface::STATUS_OK) {
+            return false;
         }
 
         return $media;
@@ -115,8 +125,9 @@ class MediaExtension extends \Twig_Extension
      * Returns the thumbnail for the provided media
      *
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
-     * @param string $format
-     * @param array $options
+     * @param string                                   $format
+     * @param array                                    $options
+     *
      * @return string
      */
     public function thumbnail($media = null, $format, $options = array())
@@ -155,6 +166,12 @@ class MediaExtension extends \Twig_Extension
         ));
     }
 
+    /**
+     * @param string $template
+     * @param array  $parameters
+     *
+     * @return mixed
+     */
     public function render($template, array $parameters = array())
     {
         if (!isset($this->ressources[$template])) {
@@ -166,7 +183,8 @@ class MediaExtension extends \Twig_Extension
 
     /**
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
-     * @param string $format
+     * @param string                                   $format
+     *
      * @return string
      */
     public function path($media = null, $format)

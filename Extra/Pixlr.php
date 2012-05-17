@@ -41,15 +41,15 @@ class Pixlr
 
     protected $validFormats;
 
-    protected $allowHosts;
+    protected $allowEreg;
 
     /**
-     * @param $referrer
-     * @param $secret
-     * @param \Sonata\MediaBundle\Provider\Pool $pool
-     * @param \Sonata\MediaBundle\Model\MediaManagerInterface $mediaManager
-     * @param \Symfony\Component\Routing\RouterInterface $router
-     * @param \Symfony\Component\Templating\EngineInterface $templating
+     * @param string                                                    $referrer
+     * @param string                                                    $secret
+     * @param \Sonata\MediaBundle\Provider\Pool                         $pool
+     * @param \Sonata\MediaBundle\Model\MediaManagerInterface           $mediaManager
+     * @param \Symfony\Component\Routing\RouterInterface                $router
+     * @param \Symfony\Component\Templating\EngineInterface             $templating
      * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      */
     public function __construct($referrer, $secret, Pool $pool, MediaManagerInterface $mediaManager, RouterInterface $router, EngineInterface $templating, ContainerInterface $container)
@@ -63,24 +63,24 @@ class Pixlr
         $this->container    = $container;
 
         $this->validFormats = array('jpg', 'png');
-        $this->allowHosts   = array(
-            '173.255.196.130',   // pilxr hosts
-            '173.255.196.177',
-        );
+        $this->allowEreg    = '@http://([a-zA-Z0-9]*).pixlr.com/_temp/[0-9a-z]{24}\.[a-z]*@';
     }
 
     /**
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
+     *
      * @return string
      */
     private function generateHash(MediaInterface $media)
     {
-        return sha1($media->getId().$media->getCreatedAt()->format('u').$this->secret);
+        return sha1($media->getId() . $media->getCreatedAt()->format('u') . $this->secret);
     }
 
     /**
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @param $id
+     *
+     * @param string $id
+     *
      * @return \Sonata\MediaBundle\Model\MediaInterface
      */
     private function getMedia($id)
@@ -96,8 +96,10 @@ class Pixlr
 
     /**
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @param $hash
+     *
+     * @param string                                   $hash
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
+     *
      * @return void
      */
     private function checkMedia($hash, MediaInterface $media)
@@ -113,6 +115,7 @@ class Pixlr
 
     /**
      * @param array $parameters
+     *
      * @return string
      */
     private function buildQuery(array $parameters = array())
@@ -127,8 +130,10 @@ class Pixlr
 
     /**
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @param $id
-     * @param $mode
+     *
+     * @param string $id
+     * @param string $mode
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function editAction($id, $mode)
@@ -160,8 +165,9 @@ class Pixlr
     }
 
     /**
-     * @param $hash
-     * @param $id
+     * @param string $hash
+     * @param string $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function exitAction($hash, $id)
@@ -175,8 +181,9 @@ class Pixlr
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param $hash
-     * @param $id
+     * @param string                                    $hash
+     * @param string                                    $id
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function targetAction(Request $request, $hash, $id)
@@ -190,24 +197,24 @@ class Pixlr
         /**
          * Pirlx send back the new image as an url, add some security check before downloading the file
          */
-        if (preg_match('@http://([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/_temp/[0-9a-z]{24}\.[a-z]*@', $request->get('image'), $matches)) {
-            if (!in_array($matches[1], $this->allowHosts)) {
-                throw new NotFoundHttpException(sprintf('Invalid image host : %s', $request->get('image')));
-            }
-        } else {
-            throw new NotFoundHttpException(sprintf('Invalid image format : %s', $request->get('image')));
+        if (!preg_match($this->allowEreg, $request->get('image'), $matches)) {
+            throw new NotFoundHttpException(sprintf('Invalid image host : %s', $request->get('image')));
         }
 
         $file = $provider->getReferenceFile($media);
         $file->setContent(file_get_contents($request->get('image')));
 
+        $provider->updateMetadata($media);
         $provider->generateThumbnails($media);
+
+        $this->mediaManager->save($media);
 
         return new RedirectResponse($this->router->generate('admin_sonata_media_media_view', array('id' => $media->getId())));
     }
 
     /**
      * @param \Sonata\MediaBundle\Model\MediaInterface $media
+     *
      * @return bool
      */
     public function isEditable(MediaInterface $media)
@@ -221,7 +228,9 @@ class Pixlr
 
     /**
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @param $id
+     *
+     * @param string $id
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function openEditorAction($id)

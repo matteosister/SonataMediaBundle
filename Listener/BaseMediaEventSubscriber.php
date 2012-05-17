@@ -40,20 +40,23 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @abstract
+     *
      * @param \Doctrine\Common\EventArgs $args
+     *
      * @return void
      */
     abstract protected function recomputeSingleEntityChangeSet(EventArgs $args);
 
     /**
      * @param \Doctrine\ORM\Event\LifecycleEventArgs $args
+     *
      * @return \Sonata\MediaBundle\Provider\MediaProviderInterface
      */
     protected function getProvider(EventArgs $args)
     {
         $media = $args->getEntity();
 
-        if(!$media instanceof MediaInterface) {
+        if (!$media instanceof MediaInterface) {
             return null;
         }
 
@@ -62,7 +65,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function postUpdate(EventArgs $args)
     {
@@ -75,7 +79,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function postRemove(EventArgs $args)
     {
@@ -88,7 +93,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function postPersist(EventArgs $args)
     {
@@ -101,7 +107,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function preUpdate(EventArgs $args)
     {
@@ -117,7 +124,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function preRemove(EventArgs $args)
     {
@@ -130,7 +138,8 @@ abstract class BaseMediaEventSubscriber implements EventSubscriber
 
     /**
      * @param \Doctrine\Common\EventArgs $args
-     * @return
+     *
+     * @return void
      */
     public function prePersist(EventArgs $args)
     {

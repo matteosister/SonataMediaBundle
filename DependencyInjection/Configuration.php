@@ -48,6 +48,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addContextsSection(ArrayNodeDefinition $node)
     {
         $node
@@ -88,6 +91,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addCdnSection(ArrayNodeDefinition $node)
     {
         $node
@@ -122,6 +128,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addFilesystemSection(ArrayNodeDefinition $node)
     {
         $node
@@ -158,6 +167,16 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
+                        ->arrayNode('mogilefs')
+                            ->children()
+                                ->scalarNode('domain')->isRequired()->end()
+                                ->arrayNode('hosts')
+                                    ->prototype('scalar')->end()
+                                    ->isRequired()
+                                ->end()
+                            ->end()
+                        ->end()
+
                         ->arrayNode('replicate')
                             ->children()
                                 ->scalarNode('master')->isRequired()->end()
@@ -171,6 +190,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addProvidersSection(ArrayNodeDefinition $node)
     {
         $node
@@ -187,21 +209,27 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('cdn')->defaultValue('sonata.media.cdn.server')->end()
                                 ->scalarNode('generator')->defaultValue('sonata.media.generator.default')->end()
                                 ->scalarNode('thumbnail')->defaultValue('sonata.media.thumbnail.format')->end()
-                                ->scalarNode('allowed_extensions')->defaultValue(array(
-                                    'pdf', 'txt', 'rtf',
-                                    'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-                                    'odt', 'odg', 'odp', 'ods', 'odc', 'odf', 'odb',
-                                    'csv',
-                                    'xml',
-                                ))->end()
-                                ->scalarNode('allowed_mime_types')->defaultValue(array(
-                                    'application/pdf', 'application/x-pdf', 'application/rtf', 'text/html', 'text/rtf', 'text/plain',
-                                    'application/excel', 'application/msword', 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint',
-                                    'application/vnd.ms-powerpoint', 'application/vnd.oasis.opendocument.text', 'application/vnd.oasis.opendocument.graphics', 'application/vnd.oasis.opendocument.presentation', 'application/vnd.oasis.opendocument.spreadsheet', 'application/vnd.oasis.opendocument.chart', 'application/vnd.oasis.opendocument.formula', 'application/vnd.oasis.opendocument.database', 'application/vnd.oasis.opendocument.image',
-                                    'text/comma-separated-values',
-                                    'text/xml',
-                                    'application/zip', // seems to be used for xlsx document ...
-                                ))->end()
+                                ->arrayNode('allowed_extensions')
+                                    ->prototype('scalar')->end()
+                                    ->defaultValue(array(
+                                        'pdf', 'txt', 'rtf',
+                                        'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pttx',
+                                        'odt', 'odg', 'odp', 'ods', 'odc', 'odf', 'odb',
+                                        'csv',
+                                        'xml',
+                                    ))
+                                ->end()
+                                ->arrayNode('allowed_mime_types')
+                                    ->prototype('scalar')->end()
+                                    ->defaultValue(array(
+                                        'application/pdf', 'application/x-pdf', 'application/rtf', 'text/html', 'text/rtf', 'text/plain',
+                                        'application/excel', 'application/msword', 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint',
+                                        'application/vnd.ms-powerpoint', 'application/vnd.oasis.opendocument.text', 'application/vnd.oasis.opendocument.graphics', 'application/vnd.oasis.opendocument.presentation', 'application/vnd.oasis.opendocument.spreadsheet', 'application/vnd.oasis.opendocument.chart', 'application/vnd.oasis.opendocument.formula', 'application/vnd.oasis.opendocument.database', 'application/vnd.oasis.opendocument.image',
+                                        'text/comma-separated-values',
+                                        'text/xml', 'application/xml',
+                                        'application/zip', // seems to be used for xlsx document ...
+                                    ))
+                                ->end()
                             ->end()
                         ->end()
 
@@ -215,15 +243,19 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('generator')->defaultValue('sonata.media.generator.default')->end()
                                 ->scalarNode('thumbnail')->defaultValue('sonata.media.thumbnail.format')->end()
                                 ->scalarNode('adapter')->defaultValue('sonata.media.adapter.image.gd')->end()
-                                ->scalarNode('allowed_extensions')->defaultValue(array(
-                                    'jpg', 'png'
-                                ))->end()
-                                ->scalarNode('allowed_mime_types')->defaultValue(array(
-                                    'image/pjpeg',
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/x-png',
-                                ))->end()
+                                ->arrayNode('allowed_extensions')
+                                    ->prototype('scalar')->end()
+                                    ->defaultValue(array('jpg', 'png'))
+                                ->end()
+                                ->arrayNode('allowed_mime_types')
+                                    ->prototype('scalar')->end()
+                                    ->defaultValue(array(
+                                        'image/pjpeg',
+                                        'image/jpeg',
+                                        'image/png',
+                                        'image/x-png',
+                                    ))
+                                ->end()
                             ->end()
                         ->end()
 
@@ -268,6 +300,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addExtraSection(ArrayNodeDefinition $node)
     {
         $node
@@ -284,6 +319,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addModelSection(ArrayNodeDefinition $node)
     {
         $node
@@ -300,6 +338,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addBuzzSection(ArrayNodeDefinition $node)
     {
         $node
@@ -314,6 +355,9 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     */
     private function addResizerSection(ArrayNodeDefinition $node)
     {
         $node
